@@ -1,5 +1,19 @@
 import { Product, CustomerOrder, NotificationItem, BahanBaku, Resep, UserAccount } from '../types';
 
+import imgBuffetSpread from '../assets/images/catering_buffet_spread_1791382503487.jpg';
+import imgNasiKotak from '../assets/images/catering_nasi_kotak_1791382487714.jpg';
+import imgCanapes from '../assets/images/catering_canapes_pastry_1791382516143.jpg';
+import imgTumpengMini from '../assets/images/catering_tumpeng_mini_1791382528061.jpg';
+import imgBanquetGala from '../assets/images/hero_catering_banquet_1791382469702.jpg';
+
+export {
+  imgBuffetSpread,
+  imgNasiKotak,
+  imgCanapes,
+  imgTumpengMini,
+  imgBanquetGala,
+};
+
 export const INITIAL_PRODUCTS: Product[] = [
   {
     id: 'prod-1',
@@ -10,7 +24,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     unit: 'per pax',
     shortDescription: 'Paket prasmanan mewah dengan 7 menu utama pilihan, hidangan penutup, dan perlengkapan chafing dish elegan.',
     fullDescription: 'Paket Prasmanan Royal Nusantara dirancang khusus untuk resepsi pernikahan, perayaan hari besar, dan gala dinner perusahaan. Dilengkapi dengan meja saji berbalut linen premium, chafing dish tembaga berpemanas konstan, kru saji profesional berseragam rapi, serta dekorasi bunga segar.',
-    image: '/src/assets/images/catering_buffet_spread_1791382503487.jpg',
+    image: imgBuffetSpread,
     minOrder: 50,
     preparationTime: 'H-2 Pemesanan',
     servingRecommendation: 'Ideal untuk 50 - 500+ tamu',
@@ -39,7 +53,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     unit: 'per box',
     shortDescription: 'Bento box ramah lingkungan dengan Rendang Daging Sapi empuk, sambal ijo, daun singkong, dan perkedel kentang.',
     fullDescription: 'Nasi Kotak Rendang Istimewa adalah solusi favorit untuk rapat dewan direksi, seminar profesional, dan gathering instansi. Dikemas dalam box kraft tebal food-grade dengan kompartemen higienis anti-bocor, sendok dan tisu ramah lingkungan.',
-    image: '/src/assets/images/catering_nasi_kotak_1791382487714.jpg',
+    image: imgNasiKotak,
     minOrder: 15,
     preparationTime: 'H-1 Pemesanan',
     servingRecommendation: '1 porsi personal bento',
@@ -67,7 +81,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     unit: 'per pax',
     shortDescription: 'Koleksi finger food premium manis dan gurih, smoked salmon tartlet, dan petit four untuk coffee break berkelas.',
     fullDescription: 'Dirancang untuk momen rehat konferensi, cocktail hour, atau launching produk. Setiap potong dibuat dengan ketelitian pastry chef berpengalaman mengombinasikan tekstur renyah dan cita rasa lembut.',
-    image: '/src/assets/images/catering_canapes_pastry_1791382516143.jpg',
+    image: imgCanapes,
     minOrder: 25,
     preparationTime: 'H-1 Pemesanan',
     servingRecommendation: 'Cocok untuk morning / afternoon tea (4 pcs/pax)',
@@ -94,7 +108,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     unit: 'per porsi',
     shortDescription: 'Tumpeng personal beralas daun pisang alami dengan 6 lauk komplit, hiasan ukiran sayur, dan kemasan kubah transparan eksklusif.',
     fullDescription: 'Sajian syukuran modern yang mempertahankan nilai luhur tradisi Indonesia dalam format higienis dan personal. Sangat diminati untuk peresmian kantor baru, ulang tahun, aqiqah, dan syukuran rumah baru.',
-    image: '/src/assets/images/catering_tumpeng_mini_1791382528061.jpg',
+    image: imgTumpengMini,
     minOrder: 10,
     preparationTime: 'H-1 Pemesanan',
     servingRecommendation: 'Porsi kenyang personal',
@@ -123,7 +137,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     unit: 'per tamu',
     shortDescription: 'Paket perhelatan agung mencakup live cooking stall, carving station daging panggang, dan hospitality full-service.',
     fullDescription: 'Pengalaman jamuan pernikahan tak terlupakan dengan sentuhan kemewahan bintang lima. Menggabungkan buffet mewah dengan 3 stall live cooking interaktif yang langsung disajikan oleh koki kami.',
-    image: '/src/assets/images/hero_catering_banquet_1791382469702.jpg',
+    image: imgBanquetGala,
     minOrder: 150,
     preparationTime: 'H-7 Pemesanan',
     servingRecommendation: 'Pernikahan, Grand Opening, Gala Dinner',
@@ -151,7 +165,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     unit: 'per box',
     shortDescription: 'Menu sehat terukur kalori dengan Salmon panggang teriyaki, beras merah organik, edamame, dan salad sayur zesty lemon.',
     fullDescription: 'Pilihan nutrisi seimbang untuk profesional aktif dan acara bertema kesehatan. Dikembangkan bersama certified nutritionist dengan penghitungan makronutrisi presisi, rendah natrium dan tanpa MSG buatan.',
-    image: '/src/assets/images/catering_buffet_spread_1791382503487.jpg',
+    image: imgBuffetSpread,
     minOrder: 10,
     preparationTime: 'H-1 Pemesanan',
     servingRecommendation: '480 kkal kalori terukur',

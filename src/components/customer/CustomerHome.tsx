@@ -2,6 +2,11 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { ArrowRight, Sparkles, ChefHat, Heart, Wine, Eye, Star, Utensils, MessageSquareQuote, ShieldCheck } from 'lucide-react';
 import { Product, UserProfile, ActiveView } from '../../types';
+import heroImg from '../../assets/images/hero_catering_banquet_1791382469702.jpg';
+import buffetImg from '../../assets/images/catering_buffet_spread_1791382503487.jpg';
+import canapesImg from '../../assets/images/catering_canapes_pastry_1791382516143.jpg';
+import tumpengImg from '../../assets/images/catering_tumpeng_mini_1791382528061.jpg';
+import nasiKotakImg from '../../assets/images/catering_nasi_kotak_1791382487714.jpg';
 
 interface CustomerHomeProps {
   user: UserProfile;
@@ -26,7 +31,7 @@ export const CustomerHome: React.FC<CustomerHomeProps> = ({
         {/* Background Image with Deep Warm Scrim & Amber Vignette */}
         <div className="absolute inset-0 z-0">
           <img
-            src="/src/assets/images/hero_catering_banquet_1791382469702.jpg"
+            src={heroImg}
             alt="Warm Banquet Hospitality Setup"
             className="w-full h-full object-cover object-center filter brightness-[0.38] contrast-[1.08] scale-105 transform duration-1000 ease-out"
           />
@@ -180,25 +185,25 @@ export const CustomerHome: React.FC<CustomerHomeProps> = ({
               title: 'Royal Prasmanan & Grand Gala',
               subtitle: 'Resepsi Megah & Ballroom',
               desc: 'Pilihan 9 menu istimewa, live carving station daging panggang, dan dessert bar memikat dengan penataan lampu ambient hangat.',
-              img: '/src/assets/images/catering_buffet_spread_1791382503487.jpg',
+              img: buffetImg,
             },
             {
               title: 'Artisanal Canapés & High Tea',
               subtitle: 'Coffee Break & Intimate Soirée',
               desc: 'Tartlet salmon asap, petite pastry renyah, dan racikan kopi seduh untuk perbincangan santai yang akrab nan elegan.',
-              img: '/src/assets/images/catering_canapes_pastry_1791382516143.jpg',
+              img: canapesImg,
             },
             {
               title: 'Tumpeng Syukuran Keraton',
               subtitle: 'Peresmian & Momen Syukur',
               desc: 'Nasi kuning gurih beraroma pandan dengan 8 lauk tradisional dalam wadah anyam alami berhias janur artistik.',
-              img: '/src/assets/images/catering_tumpeng_mini_1791382528061.jpg',
+              img: tumpengImg,
             },
             {
               title: 'Executive Bento Lunch Gathering',
               subtitle: 'Rapat Direksi & Seminar Eksklusif',
               desc: 'Bento box higienis berbahan ramah lingkungan dengan rendang empuk, telur balado, dan sayuran segar berstandar HACCP.',
-              img: '/src/assets/images/catering_nasi_kotak_1791382487714.jpg',
+              img: nasiKotakImg,
             },
           ].map((exp, idx) => (
             <div

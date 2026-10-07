@@ -2,6 +2,11 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { ArrowRight, User, UtensilsCrossed, Sparkles, ChefHat, Clock, ShieldCheck, Heart, Wine, Star } from 'lucide-react';
 import { ActiveView } from '../../types';
+import heroImg from '../../assets/images/hero_catering_banquet_1791382469702.jpg';
+import buffetImg from '../../assets/images/catering_buffet_spread_1791382503487.jpg';
+import canapesImg from '../../assets/images/catering_canapes_pastry_1791382516143.jpg';
+import tumpengImg from '../../assets/images/catering_tumpeng_mini_1791382528061.jpg';
+import nasiKotakImg from '../../assets/images/catering_nasi_kotak_1791382487714.jpg';
 
 interface WelcomePageProps {
   onNavigate: (view: ActiveView) => void;
@@ -17,7 +22,7 @@ export const WelcomePage: React.FC<WelcomePageProps> = ({ onNavigate }) => {
         {/* Background Hero Imagery with Cinematic Dark Amber Scrim */}
         <div className="absolute inset-0 z-0">
           <img
-            src="/src/assets/images/hero_catering_banquet_1791382469702.jpg"
+            src={heroImg}
             alt="Savoria Luxury Catering Banquet Setup"
             referrerPolicy="no-referrer"
             className="w-full h-full object-cover object-center filter brightness-[0.38] contrast-[1.08] scale-105 transform duration-1000 ease-out"
@@ -195,25 +200,25 @@ export const WelcomePage: React.FC<WelcomePageProps> = ({ onNavigate }) => {
               title: 'Royal Prasmanan & Gala',
               subtitle: 'Resepsi & Grand Event',
               desc: 'Pilihan hidangan megah dengan live carving station dan tatanan meja mewah.',
-              img: '/src/assets/images/catering_buffet_spread_1791382503487.jpg',
+              img: buffetImg,
             },
             {
               title: 'Artisanal Canapés & High Tea',
               subtitle: 'Coffee Break & Intimate',
               desc: 'Tartlet salmon lembut dan hidangan pencuci mulut anggun untuk momen berharga.',
-              img: '/src/assets/images/catering_canapes_pastry_1791382516143.jpg',
+              img: canapesImg,
             },
             {
               title: 'Tumpeng Syukuran Keraton',
               subtitle: 'Tradisi & Rasa Syukur',
               desc: 'Nasi kuning harum beraroma pandan dengan lauk lengkap warisan Nusantara.',
-              img: '/src/assets/images/catering_tumpeng_mini_1791382528061.jpg',
+              img: tumpengImg,
             },
             {
               title: 'Executive Bento Lunch Box',
               subtitle: 'Corporate & VIP Lunch',
               desc: 'Bento box ramah lingkungan dengan kemasan eksklusif dan menu bernutrisi tinggi.',
-              img: '/src/assets/images/catering_nasi_kotak_1791382487714.jpg',
+              img: nasiKotakImg,
             },
           ].map((exp, idx) => (
             <div
