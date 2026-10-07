@@ -1,0 +1,6 @@
+{
+  "name": "Savoria — Catering Management System",
+  "description": "Sistem manajemen dan pemesanan catering modern, elegan, dan komprehensif untuk pelanggan dan tim operasional catering.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
