@@ -31,14 +31,14 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   const total = subtotal + tax + deliveryFee + serviceFee;
   const totalGuests = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
-  const [eventTitle, setEventTitle] = useState('Gathering Spesial Keluarga & Kolega');
+  const [eventTitle, setEventTitle] = useState('');
   const [eventType, setEventType] = useState('Corporate & Family Gathering');
-  const [eventDate, setEventDate] = useState('2026-10-25');
-  const [eventTime, setEventTime] = useState('11:30 WIB');
+  const [eventDate, setEventDate] = useState('');
+  const [eventTime, setEventTime] = useState('');
   const [contactName, setContactName] = useState(currentUser?.name || '');
   const [contactPhone, setContactPhone] = useState(currentUser?.phone || '');
-  const [deliveryAddress, setDeliveryAddress] = useState('Graha Pratama Ballroom Lt. 3, Jl. MT Haryono Kav. 15');
-  const [deliveryCity, setDeliveryCity] = useState('Jakarta Selatan');
+  const [deliveryAddress, setDeliveryAddress] = useState('');
+  const [deliveryCity, setDeliveryCity] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('Bank Transfer BCA (Virtual Account)');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -183,6 +183,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 <input
                   type="text"
                   required
+                  placeholder="Contoh: Resepsi Pernikahan, Meeting Korporat, Arisan Keluarga..."
                   value={eventTitle}
                   onChange={(e) => setEventTitle(e.target.value)}
                   className="w-full px-3 py-2 text-xs bg-stone-50 border border-stone-200 rounded-xl text-stone-900 focus:outline-none focus:ring-2 focus:ring-amber-800/20 focus:border-amber-800"
@@ -210,6 +211,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                   <input
                     type="text"
                     required
+                    placeholder="Contoh: 11:30 WIB atau 18:30 WIB"
                     value={eventTime}
                     onChange={(e) => setEventTime(e.target.value)}
                     className="w-full px-3 py-2 text-xs bg-stone-50 border border-stone-200 rounded-xl text-stone-900 focus:outline-none focus:ring-2 focus:ring-amber-800/20 focus:border-amber-800"
@@ -232,6 +234,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 <textarea
                   rows={2}
                   required
+                  placeholder="Masukkan alamat lengkap venue, nama gedung, lantai, atau ruangan..."
                   value={deliveryAddress}
                   onChange={(e) => setDeliveryAddress(e.target.value)}
                   className="w-full px-3 py-2 text-xs bg-stone-50 border border-stone-200 rounded-xl text-stone-900 focus:outline-none focus:ring-2 focus:ring-amber-800/20 focus:border-amber-800"
@@ -246,6 +249,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                   <input
                     type="text"
                     required
+                    placeholder="Contoh: Jakarta Selatan, BSD Tangerang..."
                     value={deliveryCity}
                     onChange={(e) => setDeliveryCity(e.target.value)}
                     className="w-full px-3 py-2 text-xs bg-stone-50 border border-stone-200 rounded-xl text-stone-900 focus:outline-none focus:ring-2 focus:ring-amber-800/20 focus:border-amber-800"
@@ -259,6 +263,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                   <input
                     type="text"
                     required
+                    placeholder="Contoh: 081234567890"
                     value={contactPhone}
                     onChange={(e) => setContactPhone(e.target.value)}
                     className="w-full px-3 py-2 text-xs bg-stone-50 border border-stone-200 rounded-xl text-stone-900 focus:outline-none focus:ring-2 focus:ring-amber-800/20 focus:border-amber-800"

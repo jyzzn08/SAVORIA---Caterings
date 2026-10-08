@@ -26,6 +26,8 @@ export interface Product {
   reviewCount: number;
   isPopular?: boolean;
   isFeatured?: boolean;
+  modalPerPorsi?: number;
+  marginPersen?: number;
 }
 
 export interface CartItem {

@@ -39,12 +39,44 @@ export default function App() {
   // Navigation & View State
   const [activeView, setActiveView] = useState<ActiveView>('welcome');
   
-  // Data State
-  const [products] = useState<Product[]>(INITIAL_PRODUCTS);
-  const [orders, setOrders] = useState<CustomerOrder[]>(INITIAL_ORDERS);
+  // Data State with Persistence
+  const [products, setProducts] = useState<Product[]>(() => {
+    try {
+      const saved = localStorage.getItem('savoria_products');
+      return saved ? JSON.parse(saved) : INITIAL_PRODUCTS;
+    } catch {
+      return INITIAL_PRODUCTS;
+    }
+  });
+
+  const [orders, setOrders] = useState<CustomerOrder[]>(() => {
+    try {
+      const saved = localStorage.getItem('savoria_orders');
+      return saved ? JSON.parse(saved) : INITIAL_ORDERS;
+    } catch {
+      return INITIAL_ORDERS;
+    }
+  });
+
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
-  const [bahanBaku, setBahanBaku] = useState<BahanBaku[]>(INITIAL_BAHAN_BAKU);
-  const [resep] = useState<Resep[]>(INITIAL_RESEP);
+
+  const [bahanBaku, setBahanBaku] = useState<BahanBaku[]>(() => {
+    try {
+      const saved = localStorage.getItem('savoria_bahan_baku');
+      return saved ? JSON.parse(saved) : INITIAL_BAHAN_BAKU;
+    } catch {
+      return INITIAL_BAHAN_BAKU;
+    }
+  });
+
+  const [resep, setResep] = useState<Resep[]>(() => {
+    try {
+      const saved = localStorage.getItem('savoria_resep');
+      return saved ? JSON.parse(saved) : INITIAL_RESEP;
+    } catch {
+      return INITIAL_RESEP;
+    }
+  });
   const [users, setUsers] = useState<UserAccount[]>(() => {
     try {
       const saved = localStorage.getItem('savoria_registered_users');
@@ -159,7 +191,148 @@ export default function App() {
   };
 
   const handleAddBahanBaku = (newBahan: BahanBaku) => {
-    setBahanBaku((prev) => [newBahan, ...prev]);
+    setBahanBaku((prev) => {
+      const next = [newBahan, ...prev];
+      try {
+        localStorage.setItem('savoria_bahan_baku', JSON.stringify(next));
+      } catch (e) {
+        console.error(e);
+      }
+      return next;
+    });
+  };
+
+  // Menu / Product Handlers
+  const handleAddProduct = (
+    newProduct: Product,
+    newResep?: Resep,
+    newBahanItems?: BahanBaku[]
+  ) => {
+    setProducts((prev) => {
+      const updatedProds = [newProduct, ...prev];
+      try {
+        localStorage.setItem('savoria_products', JSON.stringify(updatedProds));
+      } catch (e) {
+        console.error(e);
+      }
+      return updatedProds;
+    });
+
+    if (newResep) {
+      setResep((prev) => {
+        const updatedResep = [newResep, ...prev];
+        try {
+          localStorage.setItem('savoria_resep', JSON.stringify(updatedResep));
+        } catch (e) {
+          console.error(e);
+        }
+        return updatedResep;
+      });
+    }
+
+    if (newBahanItems && newBahanItems.length > 0) {
+      setBahanBaku((prev) => {
+        const updatedBahan = [...newBahanItems, ...prev];
+        try {
+          localStorage.setItem('savoria_bahan_baku', JSON.stringify(updatedBahan));
+        } catch (e) {
+          console.error(e);
+        }
+        return updatedBahan;
+      });
+    }
+
+    // Add notification
+    const newNotif: NotificationItem = {
+      id: `notif-${Date.now()}`,
+      title: 'Menu Baru Ditambahkan',
+      message: `Menu "${newProduct.name}" berhasil didaftarkan ke katalog katering beserta kalkulasi modal HPP dan formula resep.`,
+      type: 'system',
+      timestamp: 'Baru saja',
+      read: false,
+    };
+    setNotifications((prev) => [newNotif, ...prev]);
+
+    // Optional Auto-Sync to Google Sheets if configured
+    const savedSheetsUrl = localStorage.getItem('savoria_sheets_url');
+    if (savedSheetsUrl) {
+      sendDataToGoogleSheets(savedSheetsUrl, {
+        action: 'sync_menu',
+        products: [newProduct, ...products],
+      }).catch(console.error);
+    }
+  };
+
+  const handleDeleteProduct = (productId: string) => {
+    setProducts((prev) => {
+      const updated = prev.filter((p) => p.id !== productId);
+      try {
+        localStorage.setItem('savoria_products', JSON.stringify(updated));
+      } catch (e) {
+        console.error(e);
+      }
+      return updated;
+    });
+  };
+
+  const handleUpdatePaymentStatus = (
+    orderId: string,
+    newPaymentStatus: 'unpaid' | 'dp_paid' | 'fully_paid'
+  ) => {
+    setOrders((prev) => {
+      const updated = prev.map((ord) => {
+        if (ord.id === orderId) {
+          return {
+            ...ord,
+            paymentStatus: newPaymentStatus,
+          };
+        }
+        return ord;
+      });
+      try {
+        localStorage.setItem('savoria_orders', JSON.stringify(updated));
+      } catch (e) {
+        console.error(e);
+      }
+      return updated;
+    });
+
+    const targetOrder = orders.find((o) => o.id === orderId);
+    if (targetOrder) {
+      const statusText =
+        newPaymentStatus === 'fully_paid'
+          ? 'Lunas (100%)'
+          : newPaymentStatus === 'dp_paid'
+          ? 'DP 50% Diterima'
+          : 'Belum Bayar';
+
+      const newNotif: NotificationItem = {
+        id: `notif-${Date.now()}`,
+        title: 'Status Pembayaran Diperbarui',
+        message: `Pembayaran pesanan ${targetOrder.orderNumber} (${targetOrder.eventTitle}) telah diverifikasi: ${statusText}.`,
+        type: 'payment',
+        timestamp: 'Baru saja',
+        read: false,
+        orderId,
+      };
+      setNotifications((prev) => [newNotif, ...prev]);
+    }
+  };
+
+  const handleSendBroadcast = (
+    title: string,
+    message: string,
+    type: NotificationItem['type'] = 'system'
+  ) => {
+    const newNotif: NotificationItem = {
+      id: `notif-${Date.now()}`,
+      title,
+      message,
+      type,
+      timestamp: 'Baru saja',
+      read: false,
+    };
+    setNotifications((prev) => [newNotif, ...prev]);
   };
 
   // Status advance from Admin
@@ -337,6 +510,11 @@ export default function App() {
           onUpdateOrderStatus={handleUpdateOrderStatus}
           onUpdateBahanBakuStok={handleUpdateBahanBakuStok}
           onAddBahanBaku={handleAddBahanBaku}
+          onAddProduct={handleAddProduct}
+          onDeleteProduct={handleDeleteProduct}
+          onUpdatePaymentStatus={handleUpdatePaymentStatus}
+          notifications={notifications}
+          onSendBroadcast={handleSendBroadcast}
         />
       ) : (
         <>

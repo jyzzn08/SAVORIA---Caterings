@@ -22,12 +22,12 @@ export const BahanBakuManager: React.FC<BahanBakuManagerProps> = ({
   // Form State for Adding New Item
   const [nama, setNama] = useState('');
   const [kategori, setKategori] = useState<BahanBaku['kategori']>('Bumbu & Rempah');
-  const [stokSaatIni, setStokSaatIni] = useState(10);
+  const [stokSaatIni, setStokSaatIni] = useState<number | ''>('');
   const [satuan, setSatuan] = useState<BahanBaku['satuan']>('kg');
-  const [stokMinimum, setStokMinimum] = useState(5);
-  const [hargaSatuan, setHargaSatuan] = useState(25000);
+  const [stokMinimum, setStokMinimum] = useState<number | ''>('');
+  const [hargaSatuan, setHargaSatuan] = useState<number | ''>('');
   const [supplier, setSupplier] = useState('');
-  const [lokasiPenyimpanan, setLokasiPenyimpanan] = useState('Chiller Dapur Utama');
+  const [lokasiPenyimpanan, setLokasiPenyimpanan] = useState('');
 
   const categories = [
     'all',
@@ -66,18 +66,23 @@ export const BahanBakuManager: React.FC<BahanBakuManagerProps> = ({
       kodeBahan: `BB-${String(bahanBakuList.length + 1).padStart(3, '0')}`,
       nama,
       kategori,
-      stokSaatIni: Number(stokSaatIni),
+      stokSaatIni: Number(stokSaatIni) || 0,
       satuan,
-      stokMinimum: Number(stokMinimum),
-      hargaSatuan: Number(hargaSatuan),
-      supplier: supplier || 'Supplier Rekanan Savoria',
-      status: Number(stokSaatIni) <= Number(stokMinimum) ? 'menipis' : 'aman',
-      lokasiPenyimpanan,
+      stokMinimum: Number(stokMinimum) || 0,
+      hargaSatuan: Number(hargaSatuan) || 0,
+      supplier: supplier.trim() || 'Supplier Rekanan Savoria',
+      status: (Number(stokSaatIni) || 0) <= (Number(stokMinimum) || 0) ? 'menipis' : 'aman',
+      lokasiPenyimpanan: lokasiPenyimpanan.trim() || 'Gudang Utama',
       lastUpdated: 'Baru saja',
     };
     onAddBahanBaku(newBahan);
     setIsAddModalOpen(false);
     setNama('');
+    setStokSaatIni('');
+    setStokMinimum('');
+    setHargaSatuan('');
+    setSupplier('');
+    setLokasiPenyimpanan('');
   };
 
   return (
@@ -314,9 +319,11 @@ export const BahanBakuManager: React.FC<BahanBakuManagerProps> = ({
                   <label className="block font-medium text-stone-700 mb-1">Stok Awal</label>
                   <input
                     type="number"
+                    min="0"
+                    placeholder="0"
                     required
                     value={stokSaatIni}
-                    onChange={(e) => setStokSaatIni(Number(e.target.value))}
+                    onChange={(e) => setStokSaatIni(e.target.value === '' ? '' : Number(e.target.value))}
                     className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl"
                   />
                 </div>
@@ -324,9 +331,11 @@ export const BahanBakuManager: React.FC<BahanBakuManagerProps> = ({
                   <label className="block font-medium text-stone-700 mb-1">Batas Minimum</label>
                   <input
                     type="number"
+                    min="0"
+                    placeholder="0"
                     required
                     value={stokMinimum}
-                    onChange={(e) => setStokMinimum(Number(e.target.value))}
+                    onChange={(e) => setStokMinimum(e.target.value === '' ? '' : Number(e.target.value))}
                     className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl"
                   />
                 </div>
@@ -334,9 +343,11 @@ export const BahanBakuManager: React.FC<BahanBakuManagerProps> = ({
                   <label className="block font-medium text-stone-700 mb-1">Harga Beli (Rp)</label>
                   <input
                     type="number"
+                    min="0"
+                    placeholder="0"
                     required
                     value={hargaSatuan}
-                    onChange={(e) => setHargaSatuan(Number(e.target.value))}
+                    onChange={(e) => setHargaSatuan(e.target.value === '' ? '' : Number(e.target.value))}
                     className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl"
                   />
                 </div>

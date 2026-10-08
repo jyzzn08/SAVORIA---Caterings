@@ -226,7 +226,7 @@ function syncPenggunaSheet(ss, users) {
 `;
 
 export interface SyncPayload {
-  action: 'sync_all' | 'sync_orders' | 'sync_inventory' | 'sync_users';
+  action: 'sync_all' | 'sync_orders' | 'sync_inventory' | 'sync_users' | 'sync_menu';
   orders?: CustomerOrder[];
   bahanBaku?: BahanBaku[];
   resep?: Resep[];

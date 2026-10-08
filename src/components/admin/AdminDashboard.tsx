@@ -26,12 +26,19 @@ import {
   Plus,
   Send
 } from 'lucide-react';
-import { AdminModule, CustomerOrder, Product, UserProfile, BahanBaku, Resep, UserAccount } from '../../types';
+import { AdminModule, CustomerOrder, Product, UserProfile, BahanBaku, Resep, UserAccount, NotificationItem } from '../../types';
 import { ADMIN_STATS, UPCOMING_SCHEDULES } from '../../data/mockData';
 import { formatCurrency, formatDate } from '../../utils/formatters';
 import { BahanBakuManager } from './BahanBakuManager';
 import { ResepManager } from './ResepManager';
 import { GoogleSheetsIntegration } from './GoogleSheetsIntegration';
+import { MenuManager } from './MenuManager';
+import { ProduksiManager } from './ProduksiManager';
+import { PengirimanManager } from './PengirimanManager';
+import { PembayaranManager } from './PembayaranManager';
+import { LaporanManager } from './LaporanManager';
+import { NotifikasiManager } from './NotifikasiManager';
+import { PengaturanManager } from './PengaturanManager';
 
 interface AdminDashboardProps {
   orders: CustomerOrder[];
@@ -40,10 +47,15 @@ interface AdminDashboardProps {
   resep: Resep[];
   users: UserAccount[];
   currentUser: UserProfile;
+  notifications?: NotificationItem[];
   onExitAdmin: () => void;
   onUpdateOrderStatus: (orderId: string, newStatus: any) => void;
   onUpdateBahanBakuStok: (id: string, delta: number) => void;
   onAddBahanBaku: (newBahan: BahanBaku) => void;
+  onAddProduct?: (newProduct: Product, newResep?: Resep, newBahanBakuItems?: BahanBaku[]) => void;
+  onDeleteProduct?: (productId: string) => void;
+  onUpdatePaymentStatus?: (orderId: string, newPaymentStatus: 'unpaid' | 'dp_paid' | 'fully_paid') => void;
+  onSendBroadcast?: (title: string, message: string, type: any) => void;
 }
 
 export const AdminDashboard: React.FC<AdminDashboardProps> = ({
@@ -53,10 +65,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   resep,
   users,
   currentUser,
+  notifications = [],
   onExitAdmin,
   onUpdateOrderStatus,
   onUpdateBahanBakuStok,
   onAddBahanBaku,
+  onAddProduct,
+  onDeleteProduct,
+  onUpdatePaymentStatus,
+  onSendBroadcast,
 }) => {
   const [activeModule, setActiveModule] = useState<AdminModule>('dashboard');
 
@@ -507,40 +524,76 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         {/* MODULE: MENU */}
         {activeModule === 'menu' && (
           <div className="mt-6 bg-white rounded-3xl border border-stone-200 p-6 sm:p-8 shadow-2xs">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {products.map((p) => (
-                <div key={p.id} className="p-4 border border-stone-200 rounded-xl flex gap-3">
-                  <img src={p.image} alt={p.name} className="w-16 h-16 rounded-lg object-cover bg-stone-100" />
-                  <div className="flex-1">
-                    <span className="text-[10px] text-amber-800 font-bold uppercase">{p.categoryLabel}</span>
-                    <h4 className="text-xs font-bold text-stone-900">{p.name}</h4>
-                    <span className="text-xs font-mono font-semibold text-stone-700">{formatCurrency(p.price)}</span>
-                    <span className="text-[10px] text-stone-400 block">Min. {p.minOrder} {p.unit}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <MenuManager
+              products={products}
+              resepList={resep}
+              bahanBakuList={bahanBaku}
+              onAddProduct={(newProduct, newResep, newBahanItems) => {
+                if (onAddProduct) {
+                  onAddProduct(newProduct, newResep, newBahanItems);
+                }
+              }}
+              onDeleteProduct={(id) => {
+                if (onDeleteProduct) {
+                  onDeleteProduct(id);
+                }
+              }}
+              onOpenResepDetail={() => {
+                setActiveModule('resep');
+              }}
+            />
           </div>
         )}
 
         {/* MODULE: PESANAN */}
         {activeModule === 'pesanan' && (
-          <div className="mt-6 bg-white rounded-3xl border border-stone-200 p-6 sm:p-8 shadow-2xs">
+          <div className="mt-6 bg-white rounded-3xl border border-stone-200 p-6 sm:p-8 shadow-2xs space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-stone-100">
+              <div>
+                <h3 className="text-base font-serif font-bold text-stone-900">
+                  Semua Kontrak Pesanan Catering
+                </h3>
+                <p className="text-xs text-stone-500">
+                  Pantau alur status pesanan dari booking draft, produksi dapur, hingga selesai diantar.
+                </p>
+              </div>
+              <span className="text-xs font-mono font-bold bg-amber-100 text-amber-900 px-3 py-1 rounded-full">
+                {orders.length} Pesanan
+              </span>
+            </div>
+
             <div className="space-y-3">
               {orders.map((o) => (
-                <div key={o.id} className="p-4 border border-stone-200 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                  <div>
-                    <span className="text-xs font-mono font-semibold text-stone-500">{o.orderNumber}</span>
+                <div
+                  key={o.id}
+                  className="p-4 border border-stone-200 rounded-2xl flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-stone-50/50 hover:bg-stone-50 transition-colors"
+                >
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-mono font-bold text-amber-900">{o.orderNumber}</span>
+                      <span className="text-[10px] bg-stone-200 text-stone-800 px-2 py-0.5 rounded-full font-bold uppercase">
+                        {o.statusLabel}
+                      </span>
+                      <span className="text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-semibold">
+                        {o.paymentStatus === 'fully_paid' ? 'Lunas' : o.paymentStatus === 'dp_paid' ? 'DP 50%' : 'Belum Bayar'}
+                      </span>
+                    </div>
                     <h4 className="text-sm font-bold text-stone-900">{o.eventTitle}</h4>
-                    <p className="text-xs text-stone-500">{o.contactName} · {formatDate(o.eventDate)} ({o.guestCount} pax)</p>
+                    <p className="text-xs text-stone-500">
+                      Pemesan: <strong className="text-stone-700">{o.contactName}</strong> ({o.contactPhone}) · {formatDate(o.eventDate)} ({o.eventTime}) · {o.guestCount} pax
+                    </p>
                   </div>
+
                   <div className="flex items-center gap-3">
-                    <span className="text-xs font-mono font-bold text-stone-900">{formatCurrency(o.total)}</span>
+                    <div className="text-left lg:text-right">
+                      <span className="text-[10px] text-stone-400 block">Total Kontrak:</span>
+                      <span className="text-sm font-mono font-bold text-stone-900">{formatCurrency(o.total)}</span>
+                    </div>
                     <button
                       onClick={() => handleAdvanceStatus(o)}
-                      className="px-3 py-1.5 bg-stone-900 text-white text-xs rounded-lg hover:bg-amber-900 cursor-pointer"
+                      className="px-3.5 py-2 bg-stone-900 hover:bg-amber-900 text-white text-xs rounded-xl font-semibold transition-colors cursor-pointer"
                     >
-                      Update Status ({o.statusLabel})
+                      Majukan Alur Status →
                     </button>
                   </div>
                 </div>
@@ -566,13 +619,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               </span>
             </div>
 
-            <div className="space-y-2 text-xs">
+            <div className="space-y-2.5 text-xs">
               {users
                 .filter((u) => u.role === 'customer')
                 .map((c) => {
-                  const customerOrders = orders.filter((o) =>
-                    o.contactName.toLowerCase().includes(c.name.toLowerCase()) ||
-                    o.contactPhone === c.phone
+                  const customerOrders = orders.filter(
+                    (o) =>
+                      o.contactName.toLowerCase().includes(c.name.toLowerCase()) ||
+                      o.contactPhone === c.phone ||
+                      o.customerEmail === c.email
                   );
                   const totalSpent = customerOrders.reduce((sum, o) => sum + o.total, 0);
 
@@ -612,24 +667,71 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           </div>
         )}
 
-        {/* OTHER MODULES */}
-        {['produksi', 'pengiriman', 'pembayaran', 'laporan', 'notifikasi', 'pengaturan'].includes(activeModule) && (
+        {/* MODULE: PRODUKSI */}
+        {activeModule === 'produksi' && (
           <div className="mt-6 bg-white rounded-3xl border border-stone-200 p-6 sm:p-8 shadow-2xs">
-            <div className="p-8 text-center bg-stone-50 rounded-xl border border-dashed border-stone-300">
-              <ChefHat className="w-8 h-8 text-stone-400 mx-auto mb-2" />
-              <h4 className="text-sm font-semibold text-stone-800">
-                Modul {activeModule.replace('_', ' ')} Terhubung dengan Google Sheets
-              </h4>
-              <p className="text-xs text-stone-500 max-w-md mx-auto mt-1">
-                Data operasional modul ini dapat disinkronkan langsung ke Google Sheets Anda melalui modul Google Sheets API.
-              </p>
-              <button
-                onClick={() => setActiveModule('google_sheets')}
-                className="mt-4 px-4 py-2 bg-emerald-800 text-white rounded-xl text-xs font-medium cursor-pointer hover:bg-emerald-700"
-              >
-                Buka Pengaturan Google Sheets
-              </button>
-            </div>
+            <ProduksiManager
+              orders={orders}
+              bahanBaku={bahanBaku}
+              resepList={resep}
+              onUpdateOrderStatus={onUpdateOrderStatus}
+            />
+          </div>
+        )}
+
+        {/* MODULE: PENGIRIMAN */}
+        {activeModule === 'pengiriman' && (
+          <div className="mt-6 bg-white rounded-3xl border border-stone-200 p-6 sm:p-8 shadow-2xs">
+            <PengirimanManager
+              orders={orders}
+              onUpdateOrderStatus={onUpdateOrderStatus}
+            />
+          </div>
+        )}
+
+        {/* MODULE: PEMBAYARAN */}
+        {activeModule === 'pembayaran' && (
+          <div className="mt-6 bg-white rounded-3xl border border-stone-200 p-6 sm:p-8 shadow-2xs">
+            <PembayaranManager
+              orders={orders}
+              onUpdatePaymentStatus={(orderId, status) => {
+                if (onUpdatePaymentStatus) {
+                  onUpdatePaymentStatus(orderId, status);
+                }
+              }}
+            />
+          </div>
+        )}
+
+        {/* MODULE: LAPORAN */}
+        {activeModule === 'laporan' && (
+          <div className="mt-6 bg-white rounded-3xl border border-stone-200 p-6 sm:p-8 shadow-2xs">
+            <LaporanManager
+              orders={orders}
+              products={products}
+              resepList={resep}
+              bahanBaku={bahanBaku}
+              onNavigateToSheets={() => setActiveModule('google_sheets')}
+            />
+          </div>
+        )}
+
+        {/* MODULE: NOTIFIKASI */}
+        {activeModule === 'notifikasi' && (
+          <div className="mt-6 bg-white rounded-3xl border border-stone-200 p-6 sm:p-8 shadow-2xs">
+            <NotifikasiManager
+              notifications={notifications}
+              onSendBroadcast={onSendBroadcast}
+            />
+          </div>
+        )}
+
+        {/* MODULE: PENGATURAN */}
+        {activeModule === 'pengaturan' && (
+          <div className="mt-6 bg-white rounded-3xl border border-stone-200 p-6 sm:p-8 shadow-2xs">
+            <PengaturanManager
+              onNavigateToSheets={() => setActiveModule('google_sheets')}
+            />
           </div>
         )}
 
